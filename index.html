@@ -71,12 +71,12 @@
       <form onsubmit="executarLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">E-mail</label>
-          <input type="email" id="login-email" required placeholder="seu@email.com" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          <input type="email" id="login-email" required placeholder="admin@blessence.com.br" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Senha</label>
-          <input type="password" id="login-senha" required placeholder="Digite sua senha" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          <input type="password" id="login-senha" required placeholder="Sua senha de acesso" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
         <p id="login-erro" class="text-xs text-red-600 hidden font-semibold text-center">E-mail ou senha incorretos.</p>
@@ -361,7 +361,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <h4 class="font-extrabold text-gray-900 text-base">Sincronização & Backup Blessence</h4>
-                <p class="text-xs text-surface-muted">A nuvem oficial já está conectada. Você também pode baixar backups manuais.</p>
+                <p class="text-xs text-surface-muted">A nuvem oficial está ativa. Você também pode baixar backups manuais a qualquer momento.</p>
               </div>
               <div class="flex space-x-2">
                 <button onclick="exportarBackupArquivo()" class="bg-white hover:bg-gray-50 border border-brand-200 text-brand-900 px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
@@ -689,7 +689,7 @@
     // SINCRONIZAÇÃO NUVEM AUTOMÁTICA
     async function carregarDB() {
       // 1. Lê local primeiro para carregar instantaneamente
-      const local = localStorage.getItem('BLESSENCE_V8_DB');
+      const local = localStorage.getItem('BLESSENCE_V9_DB');
       if (local) {
         try { DB = JSON.parse(local); } catch(e) { DB = DB_DEFAULT; }
         atualizarTudo();
@@ -700,7 +700,7 @@
         const { data, error } = await supabaseClient.from('blessence_dados').select('conteudo').eq('id', 'principal').single();
         if (data && data.conteudo) {
           DB = data.conteudo;
-          localStorage.setItem('BLESSENCE_V8_DB', JSON.stringify(DB));
+          localStorage.setItem('BLESSENCE_V9_DB', JSON.stringify(DB));
           atualizarTudo();
         }
       } catch(e) {
@@ -710,7 +710,7 @@
 
     async function salvarDB(db) {
       DB = db;
-      localStorage.setItem('BLESSENCE_V8_DB', JSON.stringify(DB));
+      localStorage.setItem('BLESSENCE_V9_DB', JSON.stringify(DB));
       atualizarTudo();
 
       // Envia para o Supabase
@@ -767,10 +767,15 @@
 
     function executarLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('login-email').value.trim();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
       const senha = document.getElementById('login-senha').value.trim();
-      if (email === DB.auth.email && senha === DB.auth.senha) {
+      
+      const emailEsperado = (DB.auth && DB.auth.email) ? DB.auth.email.trim().toLowerCase() : 'admin@blessence.com.br';
+      const senhaEsperada = (DB.auth && DB.auth.senha) ? DB.auth.senha.trim() : 'blessence123';
+
+      if (email === emailEsperado && senha === senhaEsperada) {
         localStorage.setItem('BLESSENCE_LOGADO', 'true');
+        document.getElementById('login-erro').classList.add('hidden');
         verificarSessao();
       } else {
         document.getElementById('login-erro').classList.remove('hidden');
@@ -953,4 +958,478 @@
     }
 
     function executarCalculoPrecificacao() {
-      const pesoG = parseNumero(document.getElementById('calc-
+      const pesoG = parseNumero(document.getElementById('calc-peso').value, 0);
+      const tempoH = parseNumero(document.getElementById('calc-tempo').value, 0);
+      const perdaPct = parseNumero(document.getElementById('calc-perda').value, 0) / 100;
+      const embalagem = parseNumero(document.getElementById('calc-embalagem').value, 0);
+      const margemSobreCustoPct = parseNumero(document.getElementById('calc-margem-alvo').value, 100) / 100;
+
+      const canalId = document.getElementById('calc-canal').value;
+      const canal = DB.canais.find(c => c.id === canalId) || { taxaPct: 0, taxaFixa: 0 };
+      const taxaPct = parseNumero(canal.taxaPct, 0) / 100;
+      const taxaFixa = parseNumero(canal.taxaFixa, 0);
+
+      const custoFilamentoTotal = (pesoG * (1 + perdaPct)) * (parseNumero(DB.config.filamentoKg, 110) / 1000);
+      const custoEnergiaTotal = tempoH * parseNumero(DB.config.energiaHora, 0.25);
+      const custoDesgasteTotal = tempoH * parseNumero(DB.config.desgasteHora, 0.75);
+      const custoFabricacao = custoFilamentoTotal + custoEnergiaTotal + custoDesgasteTotal + embalagem;
+
+      const lucroDesejado = custoFabricacao * margemSobreCustoPct;
+
+      let precoSugerido = 0;
+      let taxaTotalCanal = 0;
+
+      if ((1 - taxaPct) > 0.05) {
+        precoSugerido = (custoFabricacao + lucroDesejado + taxaFixa) / (1 - taxaPct);
+        taxaTotalCanal = (precoSugerido * taxaPct) + taxaFixa;
+      }
+
+      document.getElementById('res-custo-filamento').innerText = formatarReal(custoFilamentoTotal);
+      document.getElementById('res-custo-energia').innerText = formatarReal(custoEnergiaTotal);
+      document.getElementById('res-custo-desgaste').innerText = formatarReal(custoDesgasteTotal);
+      document.getElementById('res-custo-embalagem').innerText = formatarReal(embalagem);
+      document.getElementById('res-custo-total').innerText = formatarReal(custoFabricacao);
+      document.getElementById('res-preco-sugerido').innerText = formatarReal(precoSugerido);
+      document.getElementById('res-lucro-moeda').innerText = formatarReal(lucroDesejado);
+      document.getElementById('res-taxa-canal-valor').innerText = formatarReal(taxaTotalCanal);
+
+      return { custoFabricacao, precoSugerido, lucroDesejado };
+    }
+
+    function salvarCalculoComoProduto() {
+      const calc = executarCalculoPrecificacao();
+      const nome = document.getElementById('calc-nome').value.trim() || 'Nova Peça Blessence';
+      const novo = {
+        id: `PRD-${Date.now()}`,
+        sku: `BLE-${Date.now().toString().slice(-4)}`,
+        nome: nome,
+        categoria: DB.atributos.categorias[0] || 'Decoração',
+        cor: DB.atributos.cores[0] || 'Padrão',
+        acabamento: DB.atributos.acabamentos[0] || 'Fosco',
+        pesoG: parseNumero(document.getElementById('calc-peso').value, 100),
+        tempoH: parseNumero(document.getElementById('calc-tempo').value, 5),
+        custoFab: Number(calc.custoFabricacao.toFixed(2)),
+        precoVenda: Number(calc.precoSugerido.toFixed(2)),
+        driveUrl: '',
+        imagemBase64: ''
+      };
+      if (!DB.produtos) DB.produtos = [];
+      DB.produtos.unshift(novo);
+      salvarDB(DB);
+      navegarPara('produtos');
+      alert(`Produto "${nome}" adicionado com sucesso ao Catálogo!`);
+    }
+
+    function gerarOrcamentoPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const calc = executarCalculoPrecificacao();
+      const nomeItem = document.getElementById('calc-nome').value.trim() || 'Peça Personalizada';
+      const cliente = document.getElementById('calc-cliente').value.trim() || 'Cliente Especial';
+      const pesoG = document.getElementById('calc-peso').value;
+      const tempoH = document.getElementById('calc-tempo').value;
+      const precoFinal = formatarReal(calc.precoSugerido);
+
+      doc.setFillColor(184, 125, 75);
+      doc.rect(0, 0, 210, 35, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont('helvetica', 'bold');
+      doc.text(DB.empresa.nome || 'Blessence 3D', 20, 22);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('PROPOSTA COMERCIAL & ORÇAMENTO 3D', 120, 22);
+
+      doc.setTextColor(60, 60, 60);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Cliente: ${cliente}`, 20, 50);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}`, 20, 57);
+      doc.text('Validade: 10 dias corridos', 20, 64);
+
+      doc.setDrawColor(230, 230, 230);
+      doc.setFillColor(250, 246, 240);
+      doc.roundedRect(20, 75, 170, 65, 3, 3, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(140, 70, 30);
+      doc.text('ESPECIFICAÇÕES TÉCNICAS DO PRODUTO', 25, 87);
+
+      doc.setTextColor(50, 50, 50);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Item / Projeto: ${nomeItem}`, 25, 98);
+      doc.text(`Massa de Material: ${pesoG} gramas`, 25, 107);
+      doc.text(`Tempo de Manufatura: ${tempoH} horas de alta resolução`, 25, 116);
+      doc.text('Tecnologia Aplicada: Manufatura Aditiva FDM', 25, 125);
+
+      doc.setFillColor(184, 125, 75);
+      doc.roundedRect(20, 150, 170, 25, 3, 3, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('VALOR TOTAL PARA PRODUÇÃO:', 25, 166);
+      doc.setFontSize(16);
+      doc.text(precoFinal, 150, 166);
+
+      doc.save(`Orcamento_${cliente.replace(/\s+/g, '_')}.pdf`);
+    }
+
+    function renderizarVendas() {
+      const c = document.getElementById('tabela-vendas-corpo');
+      c.innerHTML = '';
+
+      if (!DB.vendas || DB.vendas.length === 0) {
+        c.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-surface-muted text-xs">Nenhuma venda registrada ainda.</td></tr>`;
+        return;
+      }
+
+      DB.vendas.forEach(v => {
+        const dataFormatada = v.data ? v.data.split('-').reverse().join('/') : '-';
+        c.innerHTML += `
+          <tr class="hover:bg-gray-50/50">
+            <td class="py-3 px-4 text-xs font-mono text-gray-500">${dataFormatada}</td>
+            <td class="py-3 px-4 font-mono font-bold text-xs text-brand-700">${v.id}</td>
+            <td class="py-3 px-4 font-semibold text-gray-900">${v.cliente}</td>
+            <td class="py-3 px-4 text-xs">${v.produtoNome}</td>
+            <td class="py-3 px-4 text-xs"><span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md font-medium">${v.canal}</span></td>
+            <td class="py-3 px-4 text-xs font-bold text-gray-900">${formatarReal(v.total)}</td>
+            <td class="py-3 px-4 text-xs font-bold text-emerald-600">${formatarReal(v.lucro)}</td>
+            <td class="py-3 px-4 text-right space-x-2">
+              <button onclick="abrirModalVenda('${v.id}')" class="text-xs text-gray-700 font-bold hover:underline">Editar</button>
+              <button onclick="removerVenda('${v.id}')" class="text-xs text-red-500 font-bold hover:underline">Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function abrirModalVenda(idEdicao = null) {
+      popularSelectsVenda();
+
+      if (idEdicao) {
+        const v = DB.vendas.find(x => x.id === idEdicao);
+        if (!v) return;
+        document.getElementById('modal-venda-titulo').innerText = 'Editar Registro de Venda';
+        document.getElementById('venda-id-edicao').value = v.id;
+        document.getElementById('venda-data').value = v.data || new Date().toISOString().split('T')[0];
+        document.getElementById('venda-cliente').value = v.cliente;
+        document.getElementById('venda-canal').value = v.canal;
+        document.getElementById('venda-total').value = v.total;
+        document.getElementById('venda-custo').value = v.custo || 0;
+      } else {
+        document.getElementById('modal-venda-titulo').innerText = 'Registrar Nova Venda';
+        document.getElementById('venda-id-edicao').value = '';
+        document.getElementById('venda-data').value = new Date().toISOString().split('T')[0];
+        document.getElementById('venda-cliente').value = '';
+        aoSelecionarProdutoVenda();
+      }
+
+      document.getElementById('modal-venda').classList.remove('hidden');
+      document.getElementById('modal-venda').classList.add('flex');
+    }
+
+    function popularSelectsVenda() {
+      const sp = document.getElementById('venda-produto-id');
+      sp.innerHTML = '';
+      if (!DB.produtos || DB.produtos.length === 0) {
+        sp.innerHTML = `<option value="">Cadastre um produto primeiro...</option>`;
+      } else {
+        DB.produtos.forEach(p => {
+          sp.innerHTML += `<option value="${p.id}" data-preco="${p.precoVenda}" data-custo="${p.custoFab}">${p.nome} (${formatarReal(p.precoVenda)})</option>`;
+        });
+      }
+
+      const sc = document.getElementById('venda-canal');
+      sc.innerHTML = '';
+      DB.canais.forEach(c => {
+        sc.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+      });
+    }
+
+    function aoSelecionarProdutoVenda() {
+      const s = document.getElementById('venda-produto-id');
+      const opt = s.options[s.selectedIndex];
+      if (opt && !document.getElementById('venda-id-edicao').value) {
+        document.getElementById('venda-total').value = opt.getAttribute('data-preco') || '0';
+        document.getElementById('venda-custo').value = opt.getAttribute('data-custo') || '0';
+      }
+    }
+
+    function salvarVendaFormulario(e) {
+      e.preventDefault();
+      const idEdicao = document.getElementById('venda-id-edicao').value;
+      const s = document.getElementById('venda-produto-id');
+      const prodNome = s.options[s.selectedIndex] ? s.options[s.selectedIndex].text.split(' (')[0] : 'Item Direto';
+      const total = parseNumero(document.getElementById('venda-total').value, 0);
+      const custo = parseNumero(document.getElementById('venda-custo').value, 0);
+
+      const dadosVenda = {
+        id: idEdicao || `PED-${Date.now().toString().slice(-4)}`,
+        data: document.getElementById('venda-data').value,
+        cliente: document.getElementById('venda-cliente').value.trim(),
+        produtoNome: prodNome,
+        canal: document.getElementById('venda-canal').value,
+        total: total,
+        custo: custo,
+        lucro: total - custo
+      };
+
+      if (!DB.vendas) DB.vendas = [];
+
+      if (idEdicao) {
+        const idx = DB.vendas.findIndex(v => v.id === idEdicao);
+        if (idx !== -1) DB.vendas[idx] = dadosVenda;
+      } else {
+        DB.vendas.unshift(dadosVenda);
+      }
+
+      salvarDB(DB);
+      fecharModais();
+    }
+
+    function removerVenda(id) {
+      if (confirm('Deseja excluir esta venda?')) {
+        DB.vendas = DB.vendas.filter(v => v.id !== id);
+        salvarDB(DB);
+      }
+    }
+
+    function adicionarCanalVenda() {
+      const nome = document.getElementById('novo-canal-nome').value.trim();
+      const taxaPct = parseNumero(document.getElementById('novo-canal-taxa').value, 0);
+      const taxaFixa = parseNumero(document.getElementById('novo-canal-fixa').value, 0);
+      if (!nome) return alert('Digite o nome do canal');
+
+      DB.canais.push({ id: `c_${Date.now()}`, nome, taxaPct, taxaFixa });
+      document.getElementById('novo-canal-nome').value = '';
+      document.getElementById('novo-canal-taxa').value = '';
+      document.getElementById('novo-canal-fixa').value = '';
+      salvarDB(DB);
+    }
+
+    function removerCanalVenda(id) {
+      DB.canais = DB.canais.filter(c => c.id !== id);
+      salvarDB(DB);
+    }
+
+    function renderizarCanaisConfig() {
+      const container = document.getElementById('lista-canais-config');
+      container.innerHTML = '';
+      DB.canais.forEach(c => {
+        container.innerHTML += `
+          <div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl border border-surface-border text-xs">
+            <span class="font-bold text-gray-800">${c.nome}</span>
+            <div class="flex items-center space-x-3">
+              <span class="text-surface-muted">${c.taxaPct}% + R$ ${parseNumero(c.taxaFixa).toFixed(2)}</span>
+              <button onclick="removerCanalVenda('${c.id}')" class="text-red-500 font-bold hover:underline">Remover</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function carregarLogo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 300;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          DB.empresa.logoBase64 = canvas.toDataURL('image/png', 0.85);
+          aplicarIdentidadeVisual();
+          salvarDB(DB);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function aplicarIdentidadeVisual() {
+      const nome = DB.empresa.nome || 'Blessence 3D';
+      document.getElementById('sidebar-company-name').innerText = nome;
+      document.getElementById('login-company-name').innerText = nome;
+      document.getElementById('cfg-nome-empresa').value = nome;
+
+      if (DB.empresa.logoBase64) {
+        document.getElementById('sidebar-logo-fallback').classList.add('hidden');
+        const sImg = document.getElementById('sidebar-logo-img');
+        sImg.src = DB.empresa.logoBase64;
+        sImg.classList.remove('hidden');
+
+        document.getElementById('login-logo-fallback').classList.add('hidden');
+        const lImg = document.getElementById('login-logo-img');
+        lImg.src = DB.empresa.logoBase64;
+        lImg.classList.remove('hidden');
+
+        document.getElementById('cfg-logo-preview').innerHTML = `<img src="${DB.empresa.logoBase64}" class="w-full h-full object-contain">`;
+      }
+    }
+
+    function salvarConfiguracoesGerais() {
+      DB.empresa.nome = document.getElementById('cfg-nome-empresa').value.trim() || 'Blessence 3D';
+      DB.config.filamentoKg = parseNumero(document.getElementById('cfg-filamento-padrao').value, 110);
+      DB.config.energiaHora = parseNumero(document.getElementById('cfg-energia-hora').value, 0.25);
+      DB.config.desgasteHora = parseNumero(document.getElementById('cfg-desgaste-hora').value, 0.75);
+      salvarDB(DB);
+      alert('Configurações salvas!');
+    }
+
+    function adicionarAtributo(tipo, inputId) {
+      const val = document.getElementById(inputId).value.trim();
+      if (!val) return;
+      if (!DB.atributos[tipo].includes(val)) {
+        DB.atributos[tipo].push(val);
+        salvarDB(DB);
+        document.getElementById(inputId).value = '';
+      }
+    }
+
+    function removerAtributo(tipo, item) {
+      DB.atributos[tipo] = DB.atributos[tipo].filter(i => i !== item);
+      salvarDB(DB);
+    }
+
+    function renderizarTagsAtributos() {
+      ['categorias', 'cores', 'acabamentos'].forEach(tipo => {
+        const container = document.getElementById(`lista-tags-${tipo}`);
+        container.innerHTML = '';
+        DB.atributos[tipo].forEach(item => {
+          container.innerHTML += `
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs bg-gray-100 text-gray-800 font-medium">
+              ${item}
+              <button onclick="removerAtributo('${tipo}', '${item}')" class="ml-1.5 text-gray-400 hover:text-red-500 font-bold">&times;</button>
+            </span>
+          `;
+        });
+      });
+    }
+
+    function popularSelectsAtributos() {
+      const filtroCat = document.getElementById('filtro-produto-categoria');
+      const valAtual = filtroCat.value;
+      filtroCat.innerHTML = '<option value="">Todas as Categorias</option>';
+      DB.atributos.categorias.forEach(c => filtroCat.innerHTML += `<option value="${c}">${c}</option>`);
+      filtroCat.value = valAtual;
+
+      const selCat = document.getElementById('prod-categoria');
+      const selCor = document.getElementById('prod-cor');
+      const selAcab = document.getElementById('prod-acabamento');
+      selCat.innerHTML = ''; selCor.innerHTML = ''; selAcab.innerHTML = '';
+
+      DB.atributos.categorias.forEach(c => selCat.innerHTML += `<option value="${c}">${c}</option>`);
+      DB.atributos.cores.forEach(c => selCor.innerHTML += `<option value="${c}">${c}</option>`);
+      DB.atributos.acabamentos.forEach(a => selAcab.innerHTML += `<option value="${a}">${a}</option>`);
+
+      const calcCanal = document.getElementById('calc-canal');
+      const canalSelAtual = calcCanal.value;
+      calcCanal.innerHTML = '';
+      DB.canais.forEach(c => {
+        calcCanal.innerHTML += `<option value="${c.id}">${c.nome} (${c.taxaPct}% + R$ ${parseNumero(c.taxaFixa).toFixed(2)})</option>`;
+      });
+      if (canalSelAtual) calcCanal.value = canalSelAtual;
+    }
+
+    function renderizarGraficos() {
+      const faturamento = (DB.vendas || []).reduce((acc, v) => acc + parseNumero(v.total), 0);
+      const lucro = (DB.vendas || []).reduce((acc, v) => acc + parseNumero(v.lucro), 0);
+      const margem = faturamento > 0 ? ((lucro / faturamento) * 100) : 0;
+      const horasTotais = (DB.produtos || []).reduce((acc, p) => acc + parseNumero(p.tempoH), 0);
+
+      document.getElementById('dash-faturamento').innerText = formatarReal(faturamento);
+      document.getElementById('dash-lucro').innerText = formatarReal(lucro);
+      document.getElementById('dash-margem-media').innerText = `Margem: ${margem.toFixed(1)}%`;
+      document.getElementById('dash-total-produtos').innerText = (DB.produtos || []).length;
+      document.getElementById('dash-horas-totais').innerText = `${horasTotais.toFixed(1)}h`;
+
+      const canaisContagem = {};
+      (DB.vendas || []).forEach(v => { canaisContagem[v.canal] = (canaisContagem[v.canal] || 0) + parseNumero(v.total); });
+
+      const ctxCanal = document.getElementById('chartVendasCanal');
+      if (chartCanalInstance) chartCanalInstance.destroy();
+      chartCanalInstance = new Chart(ctxCanal, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(canaisContagem).length ? Object.keys(canaisContagem) : ['Sem Vendas'],
+          datasets: [{
+            label: 'Receita (R$)',
+            data: Object.values(canaisContagem).length ? Object.values(canaisContagem) : [0],
+            backgroundColor: '#B87D4B',
+            borderRadius: 8
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      const catContagem = {};
+      (DB.produtos || []).forEach(p => { catContagem[p.categoria] = (catContagem[p.categoria] || 0) + 1; });
+
+      const ctxCat = document.getElementById('chartProdutosCategoria');
+      if (chartCatInstance) chartCatInstance.destroy();
+      chartCatInstance = new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(catContagem),
+          datasets: [{
+            data: Object.values(catContagem),
+            backgroundColor: ['#B87D4B', '#3D220F', '#E8D9C5', '#7D4C25', '#F4ECE1']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function fecharModais() {
+      document.querySelectorAll('#modal-produto, #modal-venda').forEach(m => {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      });
+    }
+
+    function atualizarTudo() {
+      aplicarIdentidadeVisual();
+      renderizarTagsAtributos();
+      popularSelectsAtributos();
+      renderizarCanaisConfig();
+      renderizarProdutos();
+      renderizarVendas();
+      executarCalculoPrecificacao();
+
+      document.getElementById('cfg-filamento-padrao').value = DB.config.filamentoKg;
+      document.getElementById('cfg-energia-hora').value = DB.config.energiaHora;
+      document.getElementById('cfg-desgaste-hora').value = DB.config.desgasteHora;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', {
+        weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+      });
+      verificarSessao();
+    });
+  </script>
+</body>
+</html>
