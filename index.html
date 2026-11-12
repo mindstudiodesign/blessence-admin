@@ -1291,3 +1291,73 @@
       document.getElementById('dash-faturamento').innerText = formatarReal(faturamento);
       document.getElementById('dash-lucro').innerText = formatarReal(lucro);
       document.getElementById('dash-margem-media').innerText = `Margem: ${margem.toFixed(1)}%`;
+      document.getElementById('dash-total-produtos').innerText = DB.produtos.length;
+      document.getElementById('dash-horas-totais').innerText = `${horasTotais.toFixed(1)}h`;
+
+      const canaisContagem = {};
+      DB.vendas.forEach(v => { canaisContagem[v.canal] = (canaisContagem[v.canal] || 0) + parseNumero(v.total); });
+
+      const ctxCanal = document.getElementById('chartVendasCanal');
+      if (chartCanalInstance) chartCanalInstance.destroy();
+      chartCanalInstance = new Chart(ctxCanal, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(canaisContagem).length ? Object.keys(canaisContagem) : ['Sem Vendas'],
+          datasets: [{
+            label: 'Receita (R$)',
+            data: Object.values(canaisContagem).length ? Object.values(canaisContagem) : [0],
+            backgroundColor: '#B87D4B',
+            borderRadius: 8
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      const catContagem = {};
+      DB.produtos.forEach(p => { catContagem[p.categoria] = (catContagem[p.categoria] || 0) + 1; });
+
+      const ctxCat = document.getElementById('chartProdutosCategoria');
+      if (chartCatInstance) chartCatInstance.destroy();
+      chartCatInstance = new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(catContagem),
+          datasets: [{
+            data: Object.values(catContagem),
+            backgroundColor: ['#B87D4B', '#3D220F', '#E8D9C5', '#7D4C25', '#F4ECE1']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function fecharModais() {
+      document.querySelectorAll('#modal-produto, #modal-venda').forEach(m => {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      });
+    }
+
+    function atualizarTudo() {
+      aplicarIdentidadeVisual();
+      renderizarTagsAtributos();
+      popularSelectsAtributos();
+      renderizarCanaisConfig();
+      renderizarProdutos();
+      renderizarVendas();
+      executarCalculoPrecificacao();
+
+      document.getElementById('cfg-filamento-padrao').value = DB.config.filamentoKg;
+      document.getElementById('cfg-energia-hora').value = DB.config.energiaHora;
+      document.getElementById('cfg-desgaste-hora').value = DB.config.desgasteHora;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', {
+        weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+      });
+      verificarSessao();
+    });
+  </script>
+</body>
+</html>
