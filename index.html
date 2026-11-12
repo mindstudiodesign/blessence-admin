@@ -11,9 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Gráficos e Gerador de PDF -->
+  <!-- Bibliotecas: Gráficos, PDF e Supabase Nuvem -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     tailwind.config = {
@@ -64,18 +65,18 @@
           <img id="login-logo-img" src="" class="w-full h-full object-contain hidden" alt="Logo">
         </div>
         <h2 id="login-company-name" class="text-2xl font-extrabold text-gray-900 mt-4">Blessence 3D</h2>
-        <p class="text-xs text-surface-muted mt-1">Painel Administrativo de Manufatura</p>
+        <p class="text-xs text-surface-muted mt-1">Portal Administrativo Exclusivo</p>
       </div>
 
       <form onsubmit="executarLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">E-mail</label>
-          <input type="email" id="login-email" required value="admin@blessence.com.br" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          <input type="email" id="login-email" required placeholder="seu@email.com" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Senha</label>
-          <input type="password" id="login-senha" required value="blessence123" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          <input type="password" id="login-senha" required placeholder="Digite sua senha" class="w-full px-4 py-3 text-sm border border-surface-border rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
         <p id="login-erro" class="text-xs text-red-600 hidden font-semibold text-center">E-mail ou senha incorretos.</p>
@@ -84,7 +85,7 @@
           Acessar Sistema
         </button>
       </form>
-      <p class="text-center text-[11px] text-surface-muted mt-6">admin.blessence.com.br &bull; Proteção SSL</p>
+      <p class="text-center text-[11px] text-surface-muted mt-6">admin.blessence.com.br &bull; Conexão Criptografada</p>
     </div>
   </div>
 
@@ -104,12 +105,14 @@
             </div>
             <div class="min-w-0">
               <h1 id="sidebar-company-name" class="font-extrabold text-gray-900 leading-tight truncate text-base">Blessence</h1>
-              <p class="text-[11px] text-surface-muted font-medium">Ateliê 3D FDM</p>
+              <p class="text-[11px] text-surface-muted font-medium flex items-center">
+                <span id="nuvem-status" class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
+                <span id="nuvem-texto">Modo Local</span>
+              </p>
             </div>
           </div>
         </div>
 
-        <!-- Links de Navegação -->
         <nav class="p-4 space-y-1.5" id="nav-container">
           <button onclick="navegarPara('produtos')" id="btn-nav-produtos" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition text-brand-700 bg-brand-50 shadow-sm">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -141,15 +144,15 @@
       <div class="p-4 border-t border-surface-border">
         <div class="bg-brand-50 p-3 rounded-2xl flex items-center justify-between">
           <div class="min-w-0">
-            <p class="font-bold text-xs text-gray-900 truncate" id="user-display">admin@blessence</p>
-            <p class="text-[10px] text-surface-muted">Conexão Segura</p>
+            <p class="font-bold text-xs text-gray-900 truncate" id="user-display">admin@blessence.com.br</p>
+            <p class="text-[10px] text-surface-muted">Painel Ativo</p>
           </div>
           <button onclick="executarLogout()" class="text-xs text-brand-700 hover:text-red-600 font-bold ml-2">Sair</button>
         </div>
       </div>
     </aside>
 
-    <!-- ÁREA DE CONTEÚDO -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
       <header class="bg-surface-card border-b border-surface-border px-8 py-4 flex items-center justify-between">
         <h2 id="page-title" class="text-xl font-bold text-gray-900">Catálogo de Produtos</h2>
@@ -158,12 +161,12 @@
 
       <div class="p-6 md:p-8 space-y-6">
 
-        <!-- 1. CATÁLOGO COM FOTOS QUADRADAS (1:1) -->
+        <!-- 1. CATÁLOGO COM FOTOS QUADRADAS -->
         <section id="tab-produtos" class="tab-content active space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 class="text-2xl font-extrabold text-gray-900">Catálogo de Peças</h3>
-              <p class="text-sm text-surface-muted">Peças cadastradas, tempos de manufatura, fotos otimizadas e custos.</p>
+              <p class="text-sm text-surface-muted">Gerencie modelos, fotos quadradas, tempos de manufatura e preços.</p>
             </div>
             <button onclick="abrirModalProduto()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-5 rounded-xl transition text-sm shadow-md flex items-center">
               <span class="mr-2 text-base">+</span> Novo Produto
@@ -183,7 +186,6 @@
             </div>
           </div>
 
-          <!-- Grade de Produtos com Fotos Quadradas (1:1) -->
           <div id="grade-produtos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </section>
 
@@ -193,7 +195,7 @@
             <div class="max-w-3xl mb-6">
               <h3 class="text-2xl font-extrabold text-gray-900">Calculadora de Custos FDM</h3>
               <p class="text-sm text-surface-muted mt-1">
-                A porcentagem digitada representa o <b>lucro líquido sobre o custo real</b> (ex: 100% dobra o valor do custo), cobrindo também as taxas do canal.
+                A porcentagem digitada representa o <b>lucro líquido sobre o custo real</b> (ex: 100% dobra o custo), cobrindo também as taxas do canal.
               </p>
             </div>
 
@@ -283,7 +285,7 @@
           <div class="flex justify-between items-center">
             <div>
               <h3 class="text-2xl font-extrabold text-gray-900">Vendas & Pedidos</h3>
-              <p class="text-sm text-surface-muted">Registro de faturamento com controle de data e canais.</p>
+              <p class="text-sm text-surface-muted">Registro detalhado de pedidos, canais e lucro real.</p>
             </div>
             <button onclick="abrirModalVenda()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-sm">
               + Registrar Venda
@@ -328,7 +330,7 @@
               <p class="text-xs text-surface-muted mt-2">Modelos cadastrados</p>
             </div>
             <div class="bg-surface-card p-5 rounded-2xl border border-surface-border shadow-sm">
-              <p class="text-xs font-semibold text-surface-muted uppercase tracking-wider">Horas de Catálogo</p>
+              <p class="text-xs font-semibold text-surface-muted uppercase tracking-wider">Horas de Manufatura</p>
               <h3 class="text-2xl font-extrabold text-gray-900 mt-1" id="dash-horas-totais">0h</h3>
               <p class="text-xs text-surface-muted mt-2">Tempo total estimado</p>
             </div>
@@ -336,14 +338,14 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm">
-              <h4 class="font-bold text-gray-900 text-sm mb-4">Faturamento por Canal de Distribuição</h4>
+              <h4 class="font-bold text-gray-900 text-sm mb-4">Faturamento por Canal de Venda</h4>
               <div class="relative h-64">
                 <canvas id="chartVendasCanal"></canvas>
               </div>
             </div>
 
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm">
-              <h4 class="font-bold text-gray-900 text-sm mb-4">Distribuição do Catálogo por Categoria</h4>
+              <h4 class="font-bold text-gray-900 text-sm mb-4">Catálogo por Categoria</h4>
               <div class="relative h-64">
                 <canvas id="chartProdutosCategoria"></canvas>
               </div>
@@ -351,8 +353,39 @@
           </div>
         </section>
 
-        <!-- 5. CONFIGURAÇÕES -->
+        <!-- 5. CONFIGURAÇÕES: NUVEM DIRETA, BACKUP E ATRIBUTOS -->
         <section id="tab-configuracoes" class="tab-content space-y-6">
+          
+          <!-- BLOCO ESPECIAL: SINCRONIZAÇÃO NUVEM & BACKUP -->
+          <div class="bg-gradient-to-r from-brand-50 to-brand-100 p-6 rounded-3xl border border-brand-200 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h4 class="font-extrabold text-gray-900 text-base">Sincronização & Backup do Ateliê</h4>
+                <p class="text-xs text-surface-muted">Conecte sua URL do Supabase para ter sincronização automática entre celular e PC.</p>
+              </div>
+              <div class="flex space-x-2">
+                <button onclick="exportarBackupArquivo()" class="bg-white hover:bg-gray-50 border border-brand-200 text-brand-900 px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition">
+                  Baixar Backup (JSON)
+                </button>
+                <label class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm transition cursor-pointer">
+                  Restaurar Dados
+                  <input type="file" accept=".json" onchange="importarBackupArquivo(event)" class="hidden">
+                </label>
+              </div>
+            </div>
+
+            <!-- Conexão Supabase Direta na Tela -->
+            <div class="pt-3 border-t border-brand-200/60">
+              <p class="text-xs font-bold text-gray-800 mb-2">Cole aqui sua Project URL do Supabase (Chave pública já integrada!)</p>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="cfg-supabase-url" placeholder="Ex: https://seucodigo.supabase.co" class="flex-1 px-4 py-2.5 text-xs border border-surface-border rounded-xl bg-white focus:ring-2 focus:ring-brand-500">
+                <button onclick="salvarCredenciaisNuvem()" class="px-5 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition">
+                  Conectar Nuvem Agora
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm space-y-5">
@@ -390,7 +423,7 @@
               </div>
 
               <button onclick="salvarConfiguracoesGerais()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-2.5 rounded-xl text-sm transition">
-                Salvar Identidade & Custos
+                Salvar Dados da Empresa
               </button>
             </div>
 
@@ -405,7 +438,7 @@
                   <input type="text" id="novo-canal-fixa" placeholder="Taxa Fixa R$ (Ex: 4)" class="px-3 py-2 text-xs border border-surface-border rounded-xl">
                 </div>
                 <button onclick="adicionarCanalVenda()" class="w-full py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl transition">
-                  + Adicionar Canal de Venda
+                  + Adicionar Canal
                 </button>
 
                 <div id="lista-canais-config" class="space-y-2 pt-2"></div>
@@ -451,7 +484,7 @@
     </main>
   </div>
 
-  <!-- MODAL: CADASTRAR OU EDITAR PRODUTO -->
+  <!-- MODAL: PRODUTO -->
   <div id="modal-produto" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-surface-border max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
@@ -462,7 +495,6 @@
       <form onsubmit="salvarProdutoFormulario(event)" class="space-y-4">
         <input type="hidden" id="prod-id-edicao">
 
-        <!-- Foto Quadrada com Compressor Interno -->
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">Foto da Peça (Compressão Automática Otimizada)</label>
           <div class="flex items-center space-x-4">
@@ -471,7 +503,7 @@
             </div>
             <div>
               <input type="file" id="prod-input-imagem" accept="image/*" onchange="comprimirECarregarImagem(event)" class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700">
-              <p class="text-[10px] text-surface-muted mt-1">Imagens grandes são redimensionadas automaticamente para não pesar o sistema.</p>
+              <p class="text-[10px] text-surface-muted mt-1">Fotos pesadas são reduzidas para economizar espaço e carregar rápido no celular.</p>
             </div>
           </div>
         </div>
@@ -537,7 +569,7 @@
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR OU EDITAR VENDA -->
+  <!-- MODAL: VENDA -->
   <div id="modal-venda" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-surface-border">
       <h4 id="modal-venda-titulo" class="font-extrabold text-gray-900 text-lg mb-4">Registrar Venda</h4>
@@ -583,8 +615,11 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT OTIMIZADO -->
+  <!-- MOTOR JAVASCRIPT REATIVO -->
   <script>
+    // CHAVE PÚBLICA SUPABASE FORNECIDA PELO CLIENTE
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fHBBM-xXnctE0Dh0SPHUgw_AcGf27PU';
+
     function parseNumero(valor, padrao = 0) {
       if (typeof valor === 'number') return isNaN(valor) ? padrao : valor;
       if (!valor) return padrao;
@@ -595,7 +630,6 @@
 
     const formatarReal = (val) => Number(parseNumero(val)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    // COMPRESSOR DE IMAGENS CLIENT-SIDE (Reduz fotos de 5MB para ~40KB)
     function comprimirECarregarImagem(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -605,7 +639,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 600; // Máximo 600x600 pixels
+          const maxDim = 500;
           let width = img.width;
           let height = img.height;
 
@@ -626,8 +660,7 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Converte com qualidade balanceada (JPEG 0.75)
-          imagemTemporariaProduto = canvas.toDataURL('image/jpeg', 0.75);
+          imagemTemporariaProduto = canvas.toDataURL('image/jpeg', 0.70);
           document.getElementById('prod-preview-img-container').innerHTML = `<img src="${imagemTemporariaProduto}" class="w-full h-full object-cover">`;
         };
         img.src = event.target.result;
@@ -635,7 +668,6 @@
       reader.readAsDataURL(file);
     }
 
-    // BANCO LOCAL
     const DB_DEFAULT = {
       auth: { email: 'admin@blessence.com.br', senha: 'blessence123' },
       empresa: { nome: 'Blessence 3D', logoBase64: '' },
@@ -652,50 +684,124 @@
         { id: 'c5', nome: 'Loja Blessence', taxaPct: 5, taxaFixa: 1.00 }
       ],
       config: { filamentoKg: 110.00, energiaHora: 0.25, desgasteHora: 0.75 },
+      supabaseUrl: '',
       produtos: [],
       vendas: []
     };
 
-    function carregarDB() {
-      try {
-        const dados = localStorage.getItem('BLESSENCE_V4_DB');
-        if (!dados) {
-          localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(DB_DEFAULT));
-          return DB_DEFAULT;
-        }
-        return JSON.parse(dados);
-      } catch (err) {
-        console.error("Erro ao ler DB", err);
-        return DB_DEFAULT;
-      }
-    }
-
-    let DB = carregarDB();
+    let DB = DB_DEFAULT;
+    let supabaseClient = null;
     let imagemTemporariaProduto = '';
     let chartCanalInstance = null;
     let chartCatInstance = null;
 
-    // SALVAMENTO SEGURO COM MONITORAMENTO DE COTA
-    function salvarDB(db) {
-      try {
-        localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(db));
-        atualizarTudo();
-      } catch (e) {
-        alert("Atenção: Limite de armazenamento local atingido. A foto enviada pode estar muito pesada.");
-        console.error("Erro no localStorage:", e);
+    function iniciarSupabase() {
+      const url = DB.supabaseUrl ? DB.supabaseUrl.trim() : '';
+      if (url.startsWith('http')) {
+        try {
+          supabaseClient = supabase.createClient(url, SUPABASE_PUBLISHABLE_KEY);
+          document.getElementById('nuvem-status').className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse';
+          document.getElementById('nuvem-texto').innerText = 'Nuvem Conectada';
+        } catch(e) {
+          console.error("Erro ao iniciar Supabase:", e);
+        }
       }
     }
 
-    // AUTENTICAÇÃO
+    async function carregarDB() {
+      const local = localStorage.getItem('BLESSENCE_V7_DB');
+      if (local) {
+        try { DB = JSON.parse(local); } catch(e) { DB = DB_DEFAULT; }
+      } else {
+        DB = DB_DEFAULT;
+      }
+
+      iniciarSupabase();
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.from('blessence_dados').select('conteudo').eq('id', 'principal').single();
+          if (data && data.conteudo) {
+            DB = data.conteudo;
+            localStorage.setItem('BLESSENCE_V7_DB', JSON.stringify(DB));
+          }
+        } catch(e) {
+          console.log("Modo local ativo.");
+        }
+      }
+
+      atualizarTudo();
+    }
+
+    async function salvarDB(db) {
+      DB = db;
+      localStorage.setItem('BLESSENCE_V7_DB', JSON.stringify(DB));
+      atualizarTudo();
+
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from('blessence_dados').upsert({ id: 'principal', conteudo: DB, atualizado_em: new Date() });
+          document.getElementById('nuvem-status').className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse';
+          document.getElementById('nuvem-texto').innerText = 'Nuvem Sincronizada';
+        } catch(e) {
+          console.error("Erro na nuvem:", e);
+        }
+      }
+    }
+
+    function exportarBackupArquivo() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Backup_Blessence_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importarBackupArquivo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const dadosImportados = JSON.parse(event.target.result);
+          if (dadosImportados && dadosImportados.produtos) {
+            DB = dadosImportados;
+            salvarDB(DB);
+            alert("Dados restaurados com sucesso! Seu celular e computador agora estão idênticos.");
+          } else {
+            alert("Arquivo de backup inválido.");
+          }
+        } catch(err) {
+          alert("Erro ao ler o arquivo de backup.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function salvarCredenciaisNuvem() {
+      const url = document.getElementById('cfg-supabase-url').value.trim();
+      if (!url.startsWith('http')) return alert("Por favor, cole a Project URL completa do Supabase (começando com https://).");
+
+      DB.supabaseUrl = url;
+      salvarDB(DB);
+      iniciarSupabase();
+      alert("Conexão com Supabase salva! O sistema agora sincronizará automaticamente em segundo plano.");
+    }
+
     function verificarSessao() {
       const logado = localStorage.getItem('BLESSENCE_LOGADO');
       if (logado === 'true') {
         document.getElementById('tela-login').classList.add('hidden');
         document.getElementById('sistema-container').classList.remove('hidden');
-        atualizarTudo();
+        carregarDB();
       } else {
         document.getElementById('tela-login').classList.remove('hidden');
         document.getElementById('sistema-container').classList.add('hidden');
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-senha').value = '';
       }
     }
 
@@ -742,14 +848,13 @@
       if (tabId === 'dashboard') renderizarGraficos();
     }
 
-    // CATÁLOGO
     function renderizarProdutos() {
       const grade = document.getElementById('grade-produtos');
       const filtroBusca = (document.getElementById('filtro-produto-busca').value || '').toLowerCase();
       const filtroCat = document.getElementById('filtro-produto-categoria').value;
       grade.innerHTML = '';
 
-      const filtrados = DB.produtos.filter(p => {
+      const filtrados = (DB.produtos || []).filter(p => {
         const atendeTexto = (p.nome || '').toLowerCase().includes(filtroBusca) || (p.sku || '').toLowerCase().includes(filtroBusca);
         const atendeCat = filtroCat === '' || p.categoria === filtroCat;
         return atendeTexto && atendeCat;
@@ -867,6 +972,8 @@
         imagemBase64: imagemTemporariaProduto
       };
 
+      if (!DB.produtos) DB.produtos = [];
+
       if (idEdicao) {
         const idx = DB.produtos.findIndex(p => p.id === idEdicao);
         if (idx !== -1) DB.produtos[idx] = dadosProduto;
@@ -879,13 +986,12 @@
     }
 
     function removerProduto(id) {
-      if (confirm('Deseja excluir este item permanentemente do catálogo?')) {
+      if (confirm('Deseja excluir este item do catálogo?')) {
         DB.produtos = DB.produtos.filter(p => p.id !== id);
         salvarDB(DB);
       }
     }
 
-    // CALCULADORA
     function executarCalculoPrecificacao() {
       const pesoG = parseNumero(document.getElementById('calc-peso').value, 0);
       const tempoH = parseNumero(document.getElementById('calc-tempo').value, 0);
@@ -942,6 +1048,7 @@
         driveUrl: '',
         imagemBase64: ''
       };
+      if (!DB.produtos) DB.produtos = [];
       DB.produtos.unshift(novo);
       salvarDB(DB);
       navegarPara('produtos');
@@ -1004,12 +1111,11 @@
       doc.save(`Orcamento_${cliente.replace(/\s+/g, '_')}.pdf`);
     }
 
-    // VENDAS
     function renderizarVendas() {
       const c = document.getElementById('tabela-vendas-corpo');
       c.innerHTML = '';
 
-      if (DB.vendas.length === 0) {
+      if (!DB.vendas || DB.vendas.length === 0) {
         c.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-surface-muted text-xs">Nenhuma venda registrada ainda.</td></tr>`;
         return;
       }
@@ -1062,7 +1168,7 @@
     function popularSelectsVenda() {
       const sp = document.getElementById('venda-produto-id');
       sp.innerHTML = '';
-      if (DB.produtos.length === 0) {
+      if (!DB.produtos || DB.produtos.length === 0) {
         sp.innerHTML = `<option value="">Cadastre um produto primeiro...</option>`;
       } else {
         DB.produtos.forEach(p => {
@@ -1105,6 +1211,8 @@
         lucro: total - custo
       };
 
+      if (!DB.vendas) DB.vendas = [];
+
       if (idEdicao) {
         const idx = DB.vendas.findIndex(v => v.id === idEdicao);
         if (idx !== -1) DB.vendas[idx] = dadosVenda;
@@ -1123,7 +1231,6 @@
       }
     }
 
-    // CONFIGURAÇÕES & CANAIS
     function adicionarCanalVenda() {
       const nome = document.getElementById('novo-canal-nome').value.trim();
       const taxaPct = parseNumero(document.getElementById('novo-canal-taxa').value, 0);
@@ -1190,6 +1297,7 @@
 
           DB.empresa.logoBase64 = canvas.toDataURL('image/png', 0.85);
           aplicarIdentidadeVisual();
+          salvarDB(DB);
         };
         img.src = event.target.result;
       };
@@ -1281,21 +1389,20 @@
       if (canalSelAtual) calcCanal.value = canalSelAtual;
     }
 
-    // DASHBOARD
     function renderizarGraficos() {
-      const faturamento = DB.vendas.reduce((acc, v) => acc + parseNumero(v.total), 0);
-      const lucro = DB.vendas.reduce((acc, v) => acc + parseNumero(v.lucro), 0);
+      const faturamento = (DB.vendas || []).reduce((acc, v) => acc + parseNumero(v.total), 0);
+      const lucro = (DB.vendas || []).reduce((acc, v) => acc + parseNumero(v.lucro), 0);
       const margem = faturamento > 0 ? ((lucro / faturamento) * 100) : 0;
-      const horasTotais = DB.produtos.reduce((acc, p) => acc + parseNumero(p.tempoH), 0);
+      const horasTotais = (DB.produtos || []).reduce((acc, p) => acc + parseNumero(p.tempoH), 0);
 
       document.getElementById('dash-faturamento').innerText = formatarReal(faturamento);
       document.getElementById('dash-lucro').innerText = formatarReal(lucro);
       document.getElementById('dash-margem-media').innerText = `Margem: ${margem.toFixed(1)}%`;
-      document.getElementById('dash-total-produtos').innerText = DB.produtos.length;
+      document.getElementById('dash-total-produtos').innerText = (DB.produtos || []).length;
       document.getElementById('dash-horas-totais').innerText = `${horasTotais.toFixed(1)}h`;
 
       const canaisContagem = {};
-      DB.vendas.forEach(v => { canaisContagem[v.canal] = (canaisContagem[v.canal] || 0) + parseNumero(v.total); });
+      (DB.vendas || []).forEach(v => { canaisContagem[v.canal] = (canaisContagem[v.canal] || 0) + parseNumero(v.total); });
 
       const ctxCanal = document.getElementById('chartVendasCanal');
       if (chartCanalInstance) chartCanalInstance.destroy();
@@ -1314,7 +1421,7 @@
       });
 
       const catContagem = {};
-      DB.produtos.forEach(p => { catContagem[p.categoria] = (catContagem[p.categoria] || 0) + 1; });
+      (DB.produtos || []).forEach(p => { catContagem[p.categoria] = (catContagem[p.categoria] || 0) + 1; });
 
       const ctxCat = document.getElementById('chartProdutosCategoria');
       if (chartCatInstance) chartCatInstance.destroy();
@@ -1350,6 +1457,10 @@
       document.getElementById('cfg-filamento-padrao').value = DB.config.filamentoKg;
       document.getElementById('cfg-energia-hora').value = DB.config.energiaHora;
       document.getElementById('cfg-desgaste-hora').value = DB.config.desgasteHora;
+
+      if (DB.supabaseUrl) {
+        document.getElementById('cfg-supabase-url').value = DB.supabaseUrl;
+      }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
