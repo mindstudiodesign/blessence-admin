@@ -59,7 +59,6 @@
   <div id="tela-login" class="fixed inset-0 bg-[#FAF6F0] z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl p-8 max-w-md w-full border border-surface-border shadow-2xl">
       <div class="text-center mb-6">
-        <!-- Logo com fundo claro e ampliado -->
         <div id="login-logo-container" class="w-24 h-24 rounded-3xl bg-[#FAF6F0] border border-brand-200 flex items-center justify-center mx-auto shadow-sm overflow-hidden p-2">
           <span id="login-logo-fallback" class="font-extrabold text-3xl text-brand-700">B</span>
           <img id="login-logo-img" src="" class="w-full h-full object-contain hidden" alt="Logo">
@@ -97,7 +96,6 @@
     <!-- BARRA LATERAL -->
     <aside class="w-full md:w-64 bg-surface-card border-r border-surface-border flex-shrink-0 flex flex-col justify-between">
       <div>
-        <!-- Destaque da Empresa e Logo Maior com Fundo Claro -->
         <div class="p-6 border-b border-surface-border">
           <div class="flex items-center space-x-3.5">
             <div id="sidebar-logo-container" class="w-14 h-14 rounded-2xl bg-[#FAF6F0] border border-brand-200 flex items-center justify-center font-bold text-2xl text-brand-700 shadow-sm overflow-hidden flex-shrink-0 p-1">
@@ -140,7 +138,6 @@
         </nav>
       </div>
 
-      <!-- Rodapé Usuário -->
       <div class="p-4 border-t border-surface-border">
         <div class="bg-brand-50 p-3 rounded-2xl flex items-center justify-between">
           <div class="min-w-0">
@@ -161,14 +158,12 @@
 
       <div class="p-6 md:p-8 space-y-6">
 
-        <!-- ========================================== -->
-        <!-- 1. CATÁLOGO COM FOTOS QUADRADAS (1:1)      -->
-        <!-- ========================================== -->
+        <!-- 1. CATÁLOGO COM FOTOS QUADRADAS (1:1) -->
         <section id="tab-produtos" class="tab-content active space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 class="text-2xl font-extrabold text-gray-900">Catálogo de Peças</h3>
-              <p class="text-sm text-surface-muted">Cadastro detalhado com fotos quadradas, tempos de manufatura e custos.</p>
+              <p class="text-sm text-surface-muted">Peças cadastradas, tempos de manufatura, fotos otimizadas e custos.</p>
             </div>
             <button onclick="abrirModalProduto()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-5 rounded-xl transition text-sm shadow-md flex items-center">
               <span class="mr-2 text-base">+</span> Novo Produto
@@ -188,24 +183,21 @@
             </div>
           </div>
 
-          <!-- Grade de Produtos com Fotos Quadradas (aspect-square) -->
+          <!-- Grade de Produtos com Fotos Quadradas (1:1) -->
           <div id="grade-produtos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- 2. CALCULADORA 3D COM MARKUP REAL + PDF    -->
-        <!-- ========================================== -->
+        <!-- 2. CALCULADORA 3D -->
         <section id="tab-precificacao" class="tab-content space-y-6">
           <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm">
             <div class="max-w-3xl mb-6">
               <h3 class="text-2xl font-extrabold text-gray-900">Calculadora de Custos FDM</h3>
               <p class="text-sm text-surface-muted mt-1">
-                A porcentagem digitada representa o <b>lucro líquido direto sobre o custo de produção</b> (ex: 100% dobra o custo), acrescida das taxas reais do canal.
+                A porcentagem digitada representa o <b>lucro líquido sobre o custo real</b> (ex: 100% dobra o valor do custo), cobrindo também as taxas do canal.
               </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <!-- Parâmetros da Peça -->
               <div class="space-y-4">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-surface-muted">1. Parâmetros da Peça</h4>
                 <div>
@@ -223,11 +215,9 @@
                 <div>
                   <label class="block text-xs font-semibold text-gray-700 mb-1">Tempo de Impressão (Horas)</label>
                   <input type="text" id="calc-tempo" value="6.5" oninput="executarCalculoPrecificacao()" class="w-full px-3 py-2 text-sm border border-surface-border rounded-xl">
-                  <span class="text-[11px] text-surface-muted">Aceita horas inteiras (ex: 10) ou fracionadas (ex: 6.5)</span>
                 </div>
               </div>
 
-              <!-- Acréscimos & Canal -->
               <div class="space-y-4">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-surface-muted">2. Embalagem & Canal</h4>
                 <div>
@@ -245,11 +235,9 @@
                 <div>
                   <label class="block text-xs font-semibold text-gray-700 mb-1">Margem de Lucro Desejada sobre o Custo (%)</label>
                   <input type="text" id="calc-margem-alvo" value="100" oninput="executarCalculoPrecificacao()" class="w-full px-3 py-2 text-sm border border-surface-border rounded-xl font-bold text-brand-700">
-                  <span class="text-[11px] text-surface-muted">Ex: 100% de margem sobre custo de R$ 20 = Lucro de R$ 20</span>
                 </div>
               </div>
 
-              <!-- Resultados -->
               <div class="bg-brand-50 p-6 rounded-2xl border border-brand-200 flex flex-col justify-between shadow-sm">
                 <div>
                   <h4 class="text-xs font-bold uppercase tracking-wider text-brand-900 mb-4">Composição de Custo Real</h4>
@@ -290,14 +278,12 @@
           </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- 3. VENDAS & PEDIDOS COM DATA E EDIÇÃO      -->
-        <!-- ========================================== -->
+        <!-- 3. VENDAS & PEDIDOS -->
         <section id="tab-vendas" class="tab-content space-y-6">
           <div class="flex justify-between items-center">
             <div>
               <h3 class="text-2xl font-extrabold text-gray-900">Vendas & Pedidos</h3>
-              <p class="text-sm text-surface-muted">Registro detalhado com data, canal e margem de lucro.</p>
+              <p class="text-sm text-surface-muted">Registro de faturamento com controle de data e canais.</p>
             </div>
             <button onclick="abrirModalVenda()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-sm">
               + Registrar Venda
@@ -323,9 +309,7 @@
           </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- 4. DASHBOARD COM EVOLUÇÃO POR DATA         -->
-        <!-- ========================================== -->
+        <!-- 4. DASHBOARD -->
         <section id="tab-dashboard" class="tab-content space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="bg-surface-card p-5 rounded-2xl border border-surface-border shadow-sm">
@@ -351,7 +335,6 @@
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Gráfico 1: Vendas por Data/Canal -->
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm">
               <h4 class="font-bold text-gray-900 text-sm mb-4">Faturamento por Canal de Distribuição</h4>
               <div class="relative h-64">
@@ -359,7 +342,6 @@
               </div>
             </div>
 
-            <!-- Gráfico 2: Categorias -->
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm">
               <h4 class="font-bold text-gray-900 text-sm mb-4">Distribuição do Catálogo por Categoria</h4>
               <div class="relative h-64">
@@ -369,13 +351,10 @@
           </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- 5. CONFIGURAÇÕES: CANAIS, ATRIBUTOS E LOGO -->
-        <!-- ========================================== -->
+        <!-- 5. CONFIGURAÇÕES -->
         <section id="tab-configuracoes" class="tab-content space-y-6">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            <!-- Empresa & Logo Clara -->
             <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm space-y-5">
               <h4 class="font-bold text-gray-900 text-base">Identidade da Empresa</h4>
               
@@ -385,7 +364,7 @@
               </div>
 
               <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Logomarca (Fundo Claro no Sistema)</label>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Logomarca (Fundo Claro)</label>
                 <div class="flex items-center space-x-4">
                   <div id="cfg-logo-preview" class="w-20 h-20 rounded-2xl bg-[#FAF6F0] border border-brand-200 flex items-center justify-center overflow-hidden p-2">
                     <span class="text-xs text-brand-700 font-bold">Sem logo</span>
@@ -415,10 +394,8 @@
               </button>
             </div>
 
-            <!-- Canais de Venda & Atributos -->
             <div class="space-y-6">
-              
-              <!-- Gerenciamento de Canais de Venda -->
+              <!-- Canais de Venda -->
               <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm space-y-4">
                 <h4 class="font-bold text-gray-900 text-base">Canais de Venda & Taxas</h4>
                 
@@ -434,11 +411,10 @@
                 <div id="lista-canais-config" class="space-y-2 pt-2"></div>
               </div>
 
-              <!-- Categorias, Cores e Acabamentos -->
+              <!-- Atributos -->
               <div class="bg-surface-card p-6 rounded-2xl border border-surface-border shadow-sm space-y-4">
                 <h4 class="font-bold text-gray-900 text-base">Atributos das Peças</h4>
 
-                <!-- Categorias -->
                 <div>
                   <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Categorias</label>
                   <div class="flex space-x-2 mb-2">
@@ -448,7 +424,6 @@
                   <div id="lista-tags-categorias" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                <!-- Cores -->
                 <div>
                   <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Cores</label>
                   <div class="flex space-x-2 mb-2">
@@ -458,7 +433,6 @@
                   <div id="lista-tags-cores" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                <!-- Acabamentos -->
                 <div>
                   <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Acabamentos</label>
                   <div class="flex space-x-2 mb-2">
@@ -468,7 +442,6 @@
                   <div id="lista-tags-acabamentos" class="flex flex-wrap gap-1.5"></div>
                 </div>
               </div>
-
             </div>
 
           </div>
@@ -478,9 +451,7 @@
     </main>
   </div>
 
-  <!-- ========================================== -->
-  <!-- MODAL: CADASTRAR OU EDITAR PRODUTO         -->
-  <!-- ========================================== -->
+  <!-- MODAL: CADASTRAR OU EDITAR PRODUTO -->
   <div id="modal-produto" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-surface-border max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
@@ -491,14 +462,17 @@
       <form onsubmit="salvarProdutoFormulario(event)" class="space-y-4">
         <input type="hidden" id="prod-id-edicao">
 
-        <!-- Foto Quadrada com Preview -->
+        <!-- Foto Quadrada com Compressor Interno -->
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Foto da Peça (Formato Quadrado 1:1)</label>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Foto da Peça (Compressão Automática Otimizada)</label>
           <div class="flex items-center space-x-4">
             <div id="prod-preview-img-container" class="w-24 h-24 rounded-2xl bg-gray-50 border border-surface-border flex items-center justify-center overflow-hidden aspect-square flex-shrink-0">
               <span class="text-[11px] text-gray-400">Sem foto</span>
             </div>
-            <input type="file" id="prod-input-imagem" accept="image/*" onchange="carregarImagemProduto(event)" class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700">
+            <div>
+              <input type="file" id="prod-input-imagem" accept="image/*" onchange="comprimirECarregarImagem(event)" class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700">
+              <p class="text-[10px] text-surface-muted mt-1">Imagens grandes são redimensionadas automaticamente para não pesar o sistema.</p>
+            </div>
           </div>
         </div>
 
@@ -563,9 +537,7 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- MODAL: REGISTRAR OU EDITAR VENDA           -->
-  <!-- ========================================== -->
+  <!-- MODAL: REGISTRAR OU EDITAR VENDA -->
   <div id="modal-venda" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-surface-border">
       <h4 id="modal-venda-titulo" class="font-extrabold text-gray-900 text-lg mb-4">Registrar Venda</h4>
@@ -611,11 +583,8 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- MOTOR JAVASCRIPT CORRIGIDO & OTIMIZADO     -->
-  <!-- ========================================== -->
+  <!-- JAVASCRIPT OTIMIZADO -->
   <script>
-    // Sanitizador Numérico Seguro: Aceita 10, 10.5 ou 10,5 sem quebrar o sistema
     function parseNumero(valor, padrao = 0) {
       if (typeof valor === 'number') return isNaN(valor) ? padrao : valor;
       if (!valor) return padrao;
@@ -626,7 +595,47 @@
 
     const formatarReal = (val) => Number(parseNumero(val)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    // BANCO DE DADOS LOCAL
+    // COMPRESSOR DE IMAGENS CLIENT-SIDE (Reduz fotos de 5MB para ~40KB)
+    function comprimirECarregarImagem(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 600; // Máximo 600x600 pixels
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Converte com qualidade balanceada (JPEG 0.75)
+          imagemTemporariaProduto = canvas.toDataURL('image/jpeg', 0.75);
+          document.getElementById('prod-preview-img-container').innerHTML = `<img src="${imagemTemporariaProduto}" class="w-full h-full object-cover">`;
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // BANCO LOCAL
     const DB_DEFAULT = {
       auth: { email: 'admin@blessence.com.br', senha: 'blessence123' },
       empresa: { nome: 'Blessence 3D', logoBase64: '' },
@@ -643,43 +652,22 @@
         { id: 'c5', nome: 'Loja Blessence', taxaPct: 5, taxaFixa: 1.00 }
       ],
       config: { filamentoKg: 110.00, energiaHora: 0.25, desgasteHora: 0.75 },
-      produtos: [
-        {
-          id: 'PRD-101',
-          sku: 'BLE-VAS-SPIRAL',
-          nome: 'Vaso Orgânico Spiral 18cm',
-          categoria: 'Vasos',
-          cor: 'Terracota',
-          acabamento: 'Spiral / Espiral',
-          pesoG: 145,
-          tempoH: 6.5,
-          custoFab: 19.80,
-          precoVenda: 65.00,
-          driveUrl: 'https://drive.google.com',
-          imagemBase64: ''
-        }
-      ],
-      vendas: [
-        {
-          id: 'PED-1',
-          data: new Date().toISOString().split('T')[0],
-          cliente: 'Camila Rocha',
-          produtoNome: 'Vaso Orgânico Spiral 18cm',
-          canal: 'Shopee',
-          total: 65.00,
-          custo: 19.80,
-          lucro: 36.10
-        }
-      ]
+      produtos: [],
+      vendas: []
     };
 
     function carregarDB() {
-      const dados = localStorage.getItem('BLESSENCE_V4_DB');
-      if (!dados) {
-        localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(DB_DEFAULT));
+      try {
+        const dados = localStorage.getItem('BLESSENCE_V4_DB');
+        if (!dados) {
+          localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(DB_DEFAULT));
+          return DB_DEFAULT;
+        }
+        return JSON.parse(dados);
+      } catch (err) {
+        console.error("Erro ao ler DB", err);
         return DB_DEFAULT;
       }
-      return JSON.parse(dados);
     }
 
     let DB = carregarDB();
@@ -687,14 +675,18 @@
     let chartCanalInstance = null;
     let chartCatInstance = null;
 
+    // SALVAMENTO SEGURO COM MONITORAMENTO DE COTA
     function salvarDB(db) {
-      localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(db));
-      atualizarTudo();
+      try {
+        localStorage.setItem('BLESSENCE_V4_DB', JSON.stringify(db));
+        atualizarTudo();
+      } catch (e) {
+        alert("Atenção: Limite de armazenamento local atingido. A foto enviada pode estar muito pesada.");
+        console.error("Erro no localStorage:", e);
+      }
     }
 
-    // ---------------------------------------------
     // AUTENTICAÇÃO
-    // ---------------------------------------------
     function verificarSessao() {
       const logado = localStorage.getItem('BLESSENCE_LOGADO');
       if (logado === 'true') {
@@ -724,9 +716,6 @@
       verificarSessao();
     }
 
-    // ---------------------------------------------
-    // NAVEGAÇÃO
-    // ---------------------------------------------
     function navegarPara(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -750,28 +739,24 @@
         configuracoes: 'Configurações do Ateliê'
       };
       document.getElementById('page-title').innerText = titulos[tabId] || 'Blessence 3D';
-
       if (tabId === 'dashboard') renderizarGraficos();
     }
 
-    // ---------------------------------------------
-    // CATÁLOGO COM FOTOS QUADRADAS (1:1)
-    // ---------------------------------------------
+    // CATÁLOGO
     function renderizarProdutos() {
       const grade = document.getElementById('grade-produtos');
       const filtroBusca = (document.getElementById('filtro-produto-busca').value || '').toLowerCase();
       const filtroCat = document.getElementById('filtro-produto-categoria').value;
-
       grade.innerHTML = '';
 
       const filtrados = DB.produtos.filter(p => {
-        const atendeTexto = p.nome.toLowerCase().includes(filtroBusca) || p.sku.toLowerCase().includes(filtroBusca);
+        const atendeTexto = (p.nome || '').toLowerCase().includes(filtroBusca) || (p.sku || '').toLowerCase().includes(filtroBusca);
         const atendeCat = filtroCat === '' || p.categoria === filtroCat;
         return atendeTexto && atendeCat;
       });
 
       if (filtrados.length === 0) {
-        grade.innerHTML = `<div class="col-span-full text-center py-12 text-surface-muted text-sm">Nenhum produto cadastrado no catálogo.</div>`;
+        grade.innerHTML = `<div class="col-span-full text-center py-12 text-surface-muted text-sm">Nenhum produto cadastrado no catálogo. Clique em "+ Novo Produto".</div>`;
         return;
       }
 
@@ -781,19 +766,17 @@
           : `<div class="w-full h-full bg-[#FAF6F0] flex items-center justify-center text-brand-500 font-extrabold text-2xl">3D</div>`;
 
         const linkDrive = p.driveUrl
-          ? `<a href="${p.driveUrl}" target="_blank" class="text-xs text-brand-600 font-bold hover:underline">Google Drive &nearr;</a>`
+          ? `<a href="${p.driveUrl}" target="_blank" class="text-xs text-brand-600 font-bold hover:underline">Drive &nearr;</a>`
           : `<span class="text-xs text-gray-400">Sem Drive</span>`;
 
         grade.innerHTML += `
           <div class="bg-surface-card rounded-3xl border border-surface-border shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
             <div>
-              <!-- Imagem Quadrada 1:1 -->
               <div class="w-full aspect-square bg-gray-100 relative overflow-hidden">
                 ${foto}
                 <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-bold text-gray-800 uppercase tracking-wider shadow-sm font-mono">${p.sku}</span>
                 <span class="absolute top-3 right-3 bg-brand-500 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-sm">${p.categoria}</span>
               </div>
-
               <div class="p-5 space-y-3">
                 <h4 class="font-extrabold text-base text-gray-900 leading-tight">${p.nome}</h4>
                 <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 pt-1">
@@ -865,24 +848,12 @@
       document.getElementById('modal-produto').classList.add('flex');
     }
 
-    function carregarImagemProduto(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          imagemTemporariaProduto = event.target.result;
-          document.getElementById('prod-preview-img-container').innerHTML = `<img src="${imagemTemporariaProduto}" class="w-full h-full object-cover">`;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
     function salvarProdutoFormulario(e) {
       e.preventDefault();
       const idEdicao = document.getElementById('prod-id-edicao').value;
 
       const dadosProduto = {
-        id: idEdicao || `PRD-${Date.now().toString().slice(-5)}`,
+        id: idEdicao || `PRD-${Date.now()}`,
         sku: document.getElementById('prod-sku').value.trim(),
         nome: document.getElementById('prod-nome').value.trim(),
         categoria: document.getElementById('prod-categoria').value,
@@ -914,9 +885,7 @@
       }
     }
 
-    // ---------------------------------------------
-    // CALCULADORA COM MARKUP REAL SOBRE O CUSTO
-    // ---------------------------------------------
+    // CALCULADORA
     function executarCalculoPrecificacao() {
       const pesoG = parseNumero(document.getElementById('calc-peso').value, 0);
       const tempoH = parseNumero(document.getElementById('calc-tempo').value, 0);
@@ -934,10 +903,8 @@
       const custoDesgasteTotal = tempoH * parseNumero(DB.config.desgasteHora, 0.75);
       const custoFabricacao = custoFilamentoTotal + custoEnergiaTotal + custoDesgasteTotal + embalagem;
 
-      // Lucro Real = % digitada aplicada sobre o custo total
       const lucroDesejado = custoFabricacao * margemSobreCustoPct;
 
-      // Preço de venda cobrindo as taxas do marketplace: Preço = (Custo + Lucro + Taxa Fixa) / (1 - Taxa%)
       let precoSugerido = 0;
       let taxaTotalCanal = 0;
 
@@ -962,7 +929,7 @@
       const calc = executarCalculoPrecificacao();
       const nome = document.getElementById('calc-nome').value.trim() || 'Nova Peça Blessence';
       const novo = {
-        id: `PRD-${Date.now().toString().slice(-4)}`,
+        id: `PRD-${Date.now()}`,
         sku: `BLE-${Date.now().toString().slice(-4)}`,
         nome: nome,
         categoria: DB.atributos.categorias[0] || 'Decoração',
@@ -978,7 +945,7 @@
       DB.produtos.unshift(novo);
       salvarDB(DB);
       navegarPara('produtos');
-      alert(`Produto "${nome}" salvo no catálogo!`);
+      alert(`Produto "${nome}" adicionado com sucesso ao Catálogo!`);
     }
 
     function gerarOrcamentoPDF() {
@@ -991,7 +958,6 @@
       const tempoH = document.getElementById('calc-tempo').value;
       const precoFinal = formatarReal(calc.precoSugerido);
 
-      // Topo
       doc.setFillColor(184, 125, 75);
       doc.rect(0, 0, 210, 35, 'F');
       doc.setTextColor(255, 255, 255);
@@ -1003,7 +969,6 @@
       doc.setFont('helvetica', 'normal');
       doc.text('PROPOSTA COMERCIAL & ORÇAMENTO 3D', 120, 22);
 
-      // Dados
       doc.setTextColor(60, 60, 60);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
@@ -1012,7 +977,6 @@
       doc.text(`Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}`, 20, 57);
       doc.text('Validade: 10 dias corridos', 20, 64);
 
-      // Caixa de Detalhes
       doc.setDrawColor(230, 230, 230);
       doc.setFillColor(250, 246, 240);
       doc.roundedRect(20, 75, 170, 65, 3, 3, 'FD');
@@ -1028,7 +992,6 @@
       doc.text(`Tempo de Manufatura: ${tempoH} horas de alta resolução`, 25, 116);
       doc.text('Tecnologia Aplicada: Manufatura Aditiva FDM', 25, 125);
 
-      // Preço Final
       doc.setFillColor(184, 125, 75);
       doc.roundedRect(20, 150, 170, 25, 3, 3, 'F');
       doc.setTextColor(255, 255, 255);
@@ -1041,12 +1004,15 @@
       doc.save(`Orcamento_${cliente.replace(/\s+/g, '_')}.pdf`);
     }
 
-    // ---------------------------------------------
-    // VENDAS COM DATA E EDIÇÃO COMPLETA
-    // ---------------------------------------------
+    // VENDAS
     function renderizarVendas() {
       const c = document.getElementById('tabela-vendas-corpo');
       c.innerHTML = '';
+
+      if (DB.vendas.length === 0) {
+        c.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-surface-muted text-xs">Nenhuma venda registrada ainda.</td></tr>`;
+        return;
+      }
 
       DB.vendas.forEach(v => {
         const dataFormatada = v.data ? v.data.split('-').reverse().join('/') : '-';
@@ -1096,9 +1062,13 @@
     function popularSelectsVenda() {
       const sp = document.getElementById('venda-produto-id');
       sp.innerHTML = '';
-      DB.produtos.forEach(p => {
-        sp.innerHTML += `<option value="${p.id}" data-preco="${p.precoVenda}" data-custo="${p.custoFab}">${p.nome} (${formatarReal(p.precoVenda)})</option>`;
-      });
+      if (DB.produtos.length === 0) {
+        sp.innerHTML = `<option value="">Cadastre um produto primeiro...</option>`;
+      } else {
+        DB.produtos.forEach(p => {
+          sp.innerHTML += `<option value="${p.id}" data-preco="${p.precoVenda}" data-custo="${p.custoFab}">${p.nome} (${formatarReal(p.precoVenda)})</option>`;
+        });
+      }
 
       const sc = document.getElementById('venda-canal');
       sc.innerHTML = '';
@@ -1111,8 +1081,8 @@
       const s = document.getElementById('venda-produto-id');
       const opt = s.options[s.selectedIndex];
       if (opt && !document.getElementById('venda-id-edicao').value) {
-        document.getElementById('venda-total').value = opt.getAttribute('data-preco');
-        document.getElementById('venda-custo').value = opt.getAttribute('data-custo');
+        document.getElementById('venda-total').value = opt.getAttribute('data-preco') || '0';
+        document.getElementById('venda-custo').value = opt.getAttribute('data-custo') || '0';
       }
     }
 
@@ -1120,7 +1090,7 @@
       e.preventDefault();
       const idEdicao = document.getElementById('venda-id-edicao').value;
       const s = document.getElementById('venda-produto-id');
-      const prodNome = s.options[s.selectedIndex] ? s.options[s.selectedIndex].text.split(' (')[0] : 'Peça';
+      const prodNome = s.options[s.selectedIndex] ? s.options[s.selectedIndex].text.split(' (')[0] : 'Item Direto';
       const total = parseNumero(document.getElementById('venda-total').value, 0);
       const custo = parseNumero(document.getElementById('venda-custo').value, 0);
 
@@ -1153,27 +1123,17 @@
       }
     }
 
-    // ---------------------------------------------
-    // GERENCIAMENTO DE CANAIS DE VENDA
-    // ---------------------------------------------
+    // CONFIGURAÇÕES & CANAIS
     function adicionarCanalVenda() {
       const nome = document.getElementById('novo-canal-nome').value.trim();
       const taxaPct = parseNumero(document.getElementById('novo-canal-taxa').value, 0);
       const taxaFixa = parseNumero(document.getElementById('novo-canal-fixa').value, 0);
-
       if (!nome) return alert('Digite o nome do canal');
 
-      DB.canais.push({
-        id: `c_${Date.now()}`,
-        nome: nome,
-        taxaPct: taxaPct,
-        taxaFixa: taxaFixa
-      });
-
+      DB.canais.push({ id: `c_${Date.now()}`, nome, taxaPct, taxaFixa });
       document.getElementById('novo-canal-nome').value = '';
       document.getElementById('novo-canal-taxa').value = '';
       document.getElementById('novo-canal-fixa').value = '';
-
       salvarDB(DB);
     }
 
@@ -1198,19 +1158,42 @@
       });
     }
 
-    // ---------------------------------------------
-    // CONFIGURAÇÕES & IDENTIDADE VISUAL
-    // ---------------------------------------------
     function carregarLogo(e) {
       const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          DB.empresa.logoBase64 = event.target.result;
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 300;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          DB.empresa.logoBase64 = canvas.toDataURL('image/png', 0.85);
           aplicarIdentidadeVisual();
         };
-        reader.readAsDataURL(file);
-      }
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function aplicarIdentidadeVisual() {
@@ -1289,7 +1272,6 @@
       DB.atributos.cores.forEach(c => selCor.innerHTML += `<option value="${c}">${c}</option>`);
       DB.atributos.acabamentos.forEach(a => selAcab.innerHTML += `<option value="${a}">${a}</option>`);
 
-      // Atualiza Select da Calculadora 3D com os Canais Cadastrados
       const calcCanal = document.getElementById('calc-canal');
       const canalSelAtual = calcCanal.value;
       calcCanal.innerHTML = '';
@@ -1299,9 +1281,7 @@
       if (canalSelAtual) calcCanal.value = canalSelAtual;
     }
 
-    // ---------------------------------------------
-    // DASHBOARD & GRÁFICOS (CHART.JS)
-    // ---------------------------------------------
+    // DASHBOARD
     function renderizarGraficos() {
       const faturamento = DB.vendas.reduce((acc, v) => acc + parseNumero(v.total), 0);
       const lucro = DB.vendas.reduce((acc, v) => acc + parseNumero(v.lucro), 0);
@@ -1311,78 +1291,3 @@
       document.getElementById('dash-faturamento').innerText = formatarReal(faturamento);
       document.getElementById('dash-lucro').innerText = formatarReal(lucro);
       document.getElementById('dash-margem-media').innerText = `Margem: ${margem.toFixed(1)}%`;
-      document.getElementById('dash-total-produtos').innerText = DB.produtos.length;
-      document.getElementById('dash-horas-totais').innerText = `${horasTotais.toFixed(1)}h`;
-
-      // 1. Gráfico de Vendas por Canal
-      const canaisContagem = {};
-      DB.vendas.forEach(v => { canaisContagem[v.canal] = (canaisContagem[v.canal] || 0) + parseNumero(v.total); });
-
-      const ctxCanal = document.getElementById('chartVendasCanal');
-      if (chartCanalInstance) chartCanalInstance.destroy();
-      chartCanalInstance = new Chart(ctxCanal, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(canaisContagem).length ? Object.keys(canaisContagem) : ['Sem Vendas'],
-          datasets: [{
-            label: 'Receita (R$)',
-            data: Object.values(canaisContagem).length ? Object.values(canaisContagem) : [0],
-            backgroundColor: '#B87D4B',
-            borderRadius: 8
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-
-      // 2. Gráfico por Categoria
-      const catContagem = {};
-      DB.produtos.forEach(p => { catContagem[p.categoria] = (catContagem[p.categoria] || 0) + 1; });
-
-      const ctxCat = document.getElementById('chartProdutosCategoria');
-      if (chartCatInstance) chartCatInstance.destroy();
-      chartCatInstance = new Chart(ctxCat, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(catContagem),
-          datasets: [{
-            data: Object.values(catContagem),
-            backgroundColor: ['#B87D4B', '#3D220F', '#E8D9C5', '#7D4C25', '#F4ECE1']
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    function fecharModais() {
-      document.querySelectorAll('#modal-produto, #modal-venda').forEach(m => {
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-      });
-    }
-
-    // ---------------------------------------------
-    // ATUALIZAÇÃO CENTRAL
-    // ---------------------------------------------
-    function atualizarTudo() {
-      aplicarIdentidadeVisual();
-      renderizarTagsAtributos();
-      popularSelectsAtributos();
-      renderizarCanaisConfig();
-      renderizarProdutos();
-      renderizarVendas();
-      executarCalculoPrecificacao();
-
-      document.getElementById('cfg-filamento-padrao').value = DB.config.filamentoKg;
-      document.getElementById('cfg-energia-hora').value = DB.config.energiaHora;
-      document.getElementById('cfg-desgaste-hora').value = DB.config.desgasteHora;
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', {
-        weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
-      });
-      verificarSessao();
-    });
-  </script>
-</body>
-</html>
